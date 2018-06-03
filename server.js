@@ -1,7 +1,9 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var mongojs = require('mongojs');
 var request = require('request');
 var cheerio = require('cheerio');
+var ObjectID = require('mongodb').ObjectID;
 
 var app = express();
 
@@ -10,13 +12,25 @@ mongoose.connect('mongodb://localhost/scraper');
 var databaseUrl = "scraper";
 var collections = ["scrapedData"];
 
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  // we're connected!
-  console.log("We're connected")
+var db = mongojs(databaseUrl, collections);
+db.on("error", function(error) {
+  console.log("Database Error:", error);
 });
 
+// var db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', function() {
+//   // we're connected!
+//   console.log("We're connected")
+// });
+
+// var articleInfo = {
+//   _id: new ObjectID(),
+//   title: String,
+//   link: String,
+//   summary: String,
+//   date: Date
+// };
 
 app.get("/scrape", function(req, res) {
 
@@ -37,23 +51,25 @@ app.get("/scrape", function(req, res) {
         console.log("date: " + date);
         console.log("--------------------------------")
 
-        // if (title && link) {
+        if (summary && date) {
   
-        //   db.scrapedData.insert({
-        //     title: title,
-        //     link: link
-        //   },
-        //   function(err, inserted) {
-        //     if (err) {
+          db.scrapedData.insert({
+            title: title,
+            link: link,
+            summary: summary,
+            date: date
+          },
+          function(err, inserted) {
+            if (err) {
   
-        //       console.log(err);
-        //     }
-        //     else {
+              console.log(err);
+            }
+            else {
 
-        //       console.log(inserted);
-        //     }
-        //   });
-        // }
+              console.log("data inserted: " + JSON.stringify(inserted));
+            }
+          });
+        }
       });
     });
     res.send("Scrape Complete");
