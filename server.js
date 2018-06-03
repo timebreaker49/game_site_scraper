@@ -24,13 +24,18 @@ app.get("/scrape", function(req, res) {
 
       var $ = cheerio.load(html);
 
-      $(".media-body").each(function(i, element) {
+      $(".media-title").each(function(i, element) {
 
         var title = $(element).text();
-        var link = $(element).parentsUntil("a").attr("href");
+        var link = $(element).closest("a").attr("href");
+        var summary = $(element).next().text();
+        var date = $(element).siblings("footer").text();
   
         console.log("title: " + title);
-        console.log("link: " + link);
+        console.log("link: https://www.gamespot.com" + link);
+        console.log("summary: " + summary);
+        console.log("date: " + date);
+        console.log("--------------------------------")
 
         // if (title && link) {
   
