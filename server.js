@@ -7,6 +7,7 @@ var ObjectID = require('mongodb').ObjectID;
 
 var app = express();
 
+mongoose.Promise =  Promise;
 mongoose.connect('mongodb://localhost/scraper');
 
 var databaseUrl = "scraper";
@@ -50,6 +51,16 @@ app.get("/scrape", function(req, res) {
         console.log("summary: " + summary);
         console.log("date: " + date);
         console.log("--------------------------------")
+
+        db.scrapedData.find({}, function(error, found) {
+          if (error) {
+            console.log(error);
+          }
+
+          else {
+            res.json(found);
+          }
+
 
         if (summary && date) {
   
