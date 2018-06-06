@@ -3,35 +3,27 @@ var mongoose = require('mongoose');
 var mongojs = require('mongojs');
 var request = require('request');
 var cheerio = require('cheerio');
-var ObjectID = require('mongodb').ObjectID;
 
+var db = require ('./models');
 var app = express();
 
+var MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/scraper'
+
 mongoose.Promise =  Promise;
-mongoose.connect('mongodb://localhost/scraper');
+mongoose.connect(MONGODB_URI);
 
 var databaseUrl = "scraper";
 var collections = ["scrapedData"];
 
-var db = mongojs(databaseUrl, collections);
 db.on("error", function(error) {
   console.log("Database Error:", error);
 });
 
-// var db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', function() {
-//   // we're connected!
-//   console.log("We're connected")
-// });
+// Use body-parser for handling form submissions
+app.use(bodyParser.urlencoded({ extended: true }));
+// Use express.static to serve the public folder as a static directory
+app.use(express.static("public"));
 
-// var articleInfo = {
-//   _id: new ObjectID(),
-//   title: String,
-//   link: String,
-//   summary: String,
-//   date: Date
-// };
 
 app.get("/scrape", function(req, res) {
 
@@ -52,6 +44,8 @@ app.get("/scrape", function(req, res) {
         console.log("date: " + date);
         console.log("--------------------------------")
 
+
+        
         db.scrapedData.find({}, function(error, found) {
           if (error) {
             console.log(error);
