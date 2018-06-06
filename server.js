@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var mongojs = require('mongojs');
 var request = require('request');
@@ -14,10 +15,6 @@ mongoose.connect(MONGODB_URI);
 
 var databaseUrl = "scraper";
 var collections = ["scrapedData"];
-
-db.on("error", function (error) {
-  console.log("Database Error:", error);
-});
 
 app.use(bodyParser.urlencoded({
   extended: true
